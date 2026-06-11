@@ -47,11 +47,18 @@ exports.register = async (req, res, next) => {
     });
 
     if (process.env.SMTP_HOST) {
-      await sendEmail({
-        to: email,
-        subject: 'TaskSync — Verify your email',
-        html: `<p>Your verification code is:</p><h2>${otp}</h2><p>It expires in 15 minutes.</p>`
-      });
+      try {
+        await sendEmail({
+          to: email,
+          subject: 'TaskSync — Verify your email',
+          html: `<p>Your verification code is:</p><h2>${otp}</h2><p>It expires in 15 minutes.</p>`
+        });
+      } catch (mailErr) {
+        // Roll back so the account is not stranded (unverified + un-resendable)
+        await prisma.emailVerificationOtp.deleteMany({ where: { userId: user.id } });
+        await prisma.user.delete({ where: { id: user.id } });
+        return res.status(502).json({ success: false, message: 'Could not send verification email. Please try again.' });
+      }
       res.status(201).json({ success: true, message: 'Account created. Check your email for the verification code.' });
     } else {
       res.status(201).json({ success: true, message: 'Account created. Enter the OTP to verify.', otp });
@@ -138,11 +145,15 @@ exports.forgotPassword = async (req, res, next) => {
     });
 
     if (process.env.SMTP_HOST) {
-      await sendEmail({
-        to: user.email,
-        subject: 'TaskSync — Password Reset OTP',
-        html: `<p>Your password reset OTP is:</p><h2 style="letter-spacing:4px">${otp}</h2><p>It expires in 15 minutes. Do not share this with anyone.</p>`
-      });
+      try {
+        await sendEmail({
+          to: user.email,
+          subject: 'TaskSync — Password Reset OTP',
+          html: `<p>Your password reset OTP is:</p><h2 style="letter-spacing:4px">${otp}</h2><p>It expires in 15 minutes. Do not share this with anyone.</p>`
+        });
+      } catch (mailErr) {
+        return res.status(502).json({ success: false, message: 'Could not send the OTP email. Please try again.' });
+      }
     } else {
       console.log(`\n[DEV] Password reset OTP for ${user.email}: ${otp}\n`);
     }
@@ -212,11 +223,15 @@ exports.resendOtp = async (req, res, next) => {
     });
 
     if (process.env.SMTP_HOST) {
-      await sendEmail({
-        to: email,
-        subject: 'TaskSync — New Verification Code',
-        html: `<p>Your new verification code is:</p><h2>${otp}</h2><p>It expires in 15 minutes.</p>`
-      });
+      try {
+        await sendEmail({
+          to: email,
+          subject: 'TaskSync — New Verification Code',
+          html: `<p>Your new verification code is:</p><h2>${otp}</h2><p>It expires in 15 minutes.</p>`
+        });
+      } catch (mailErr) {
+        return res.status(502).json({ success: false, message: 'Could not send the OTP email. Please try again.' });
+      }
       res.json({ success: true, message: 'New OTP sent to your email.' });
     } else {
       res.json({ success: true, message: 'New OTP generated.', otp });
