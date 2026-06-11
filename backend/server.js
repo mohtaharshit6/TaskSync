@@ -22,17 +22,13 @@ const server = http.createServer(app);
 initSocket(server);
 
 app.use(helmet({ crossOriginResourcePolicy: false }));
-const allowedOrigins = process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',').map(o => o.trim()) : [];
 app.use(cors({
-  origin: (origin, cb) => {
-    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
-    cb(new Error('Not allowed by CORS'));
-  },
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
-app.options('*', cors());
+app.options('*', cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: '100kb' }));
 app.use(cookieParser());
 
