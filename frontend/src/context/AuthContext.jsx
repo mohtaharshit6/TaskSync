@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     (async () => {
       try {
-        const { data: refreshData } = await axios.post('/api/auth/refresh', {}, { withCredentials: true });
+        const { data: refreshData } = await axios.post(`${import.meta.env.VITE_API_URL || '/api'}/auth/refresh`, {}, { withCredentials: true });
         setToken(refreshData.data.accessToken);
         const { data } = await api.get('/users/me');
         setUser(data.data);
