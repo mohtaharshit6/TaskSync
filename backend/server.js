@@ -17,6 +17,7 @@ const errorHandler = require('./src/middleware/errorHandler');
 const { generalLimiter } = require('./src/middleware/rateLimiter');
 
 const app = express();
+app.set('trust proxy', 1);
 const server = http.createServer(app);
 
 initSocket(server);
