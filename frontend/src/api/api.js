@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const api = axios.create({ baseURL: '/api', withCredentials: true });
+const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || '/api', withCredentials: true });
 
 let accessToken = null;
 export const setToken   = (t) => { accessToken = t; };
@@ -34,7 +34,7 @@ api.interceptors.response.use(
     orig._retry = true;
     isRefreshing = true;
     try {
-      const { data } = await axios.post('/api/auth/refresh', {}, { withCredentials: true });
+      const { data } = await axios.post(`${import.meta.env.VITE_API_URL || '/api'}/auth/refresh`, {}, { withCredentials: true });
       const token = data.data.accessToken;
       setToken(token);
       flush(null, token);
