@@ -19,7 +19,7 @@ export const SocketProvider = ({ children }) => {
       return;
     }
 
-    const s = io({ withCredentials: true, auth: { token: getToken() } });
+    const s = io(import.meta.env.VITE_SOCKET_URL || '', { withCredentials: true, auth: { token: getToken() } });
     socketRef.current = s;
     setSocket(s);
 
