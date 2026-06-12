@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
-const { sendEmail } = require('../services/emailService');
+const { sendEmail, isEmailEnabled } = require('../services/emailService');
 const prisma = new PrismaClient();
 
 const generateAccessToken = (user) =>
@@ -46,7 +46,7 @@ exports.register = async (req, res, next) => {
       data: { userId: user.id, otp: hashOtp(otp), expiresAt: new Date(Date.now() + 15 * 60 * 1000) }
     });
 
-    if (process.env.SMTP_HOST) {
+    if (isEmailEnabled()) {
       try {
         await sendEmail({
           to: email,
@@ -144,7 +144,7 @@ exports.forgotPassword = async (req, res, next) => {
       data: { userId: user.id, token: hashOtp(otp), expiresAt: new Date(Date.now() + 15 * 60 * 1000) }
     });
 
-    if (process.env.SMTP_HOST) {
+    if (isEmailEnabled()) {
       try {
         await sendEmail({
           to: user.email,
@@ -222,7 +222,7 @@ exports.resendOtp = async (req, res, next) => {
       data: { userId: user.id, otp: hashOtp(otp), expiresAt: new Date(Date.now() + 15 * 60 * 1000) }
     });
 
-    if (process.env.SMTP_HOST) {
+    if (isEmailEnabled()) {
       try {
         await sendEmail({
           to: email,
