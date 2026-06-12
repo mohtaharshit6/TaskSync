@@ -34,8 +34,13 @@ api.interceptors.response.use(
     orig._retry = true;
     isRefreshing = true;
     try {
-      const { data } = await axios.post(`${import.meta.env.VITE_API_URL || '/api'}/auth/refresh`, {}, { withCredentials: true });
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_API_URL || '/api'}/auth/refresh`,
+        { refreshToken: localStorage.getItem('refreshToken') },
+        { withCredentials: true }
+      );
       const token = data.data.accessToken;
+      if (data.data.refreshToken) localStorage.setItem('refreshToken', data.data.refreshToken);
       setToken(token);
       flush(null, token);
       window.dispatchEvent(new CustomEvent('token-refreshed', { detail: { token } }));
