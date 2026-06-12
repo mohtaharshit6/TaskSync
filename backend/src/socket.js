@@ -8,7 +8,7 @@ let io;
 const init = (httpServer) => {
   io = new Server(httpServer, {
     cors: {
-      origin: process.env.CLIENT_URL,
+      origin: true, // reflect request origin — Vercel serves the app on several domains
       methods: ['GET', 'POST'],
       credentials: true
     }

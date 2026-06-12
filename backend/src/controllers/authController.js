@@ -83,14 +83,17 @@ exports.login = async (req, res, next) => {
 
     res.json({
       success: true,
-      data: { accessToken, user: { id: user.id, name: user.name, email: user.email } }
+      data: { accessToken, refreshToken, user: { id: user.id, name: user.name, email: user.email } }
     });
   } catch (err) { next(err); }
 };
 
 exports.refresh = async (req, res, next) => {
   try {
-    const token = req.cookies.refreshToken;
+    // Accept the token from the request body (localStorage fallback) or the
+    // httpOnly cookie. The body path works even when browsers block the
+    // cross-site cookie (Vercel frontend ↔ Render backend).
+    const token = req.body?.refreshToken || req.cookies.refreshToken;
     if (!token) return res.status(401).json({ success: false, message: 'No refresh token' });
 
     const stored = await prisma.refreshToken.findUnique({ where: { token } });
@@ -111,13 +114,13 @@ exports.refresh = async (req, res, next) => {
     await prisma.refreshToken.create({ data: { token: newRefresh, userId: user.id, expiresAt: refreshExpiry() } });
     setRefreshCookie(res, newRefresh);
 
-    res.json({ success: true, data: { accessToken: generateAccessToken(user) } });
+    res.json({ success: true, data: { accessToken: generateAccessToken(user), refreshToken: newRefresh } });
   } catch (err) { next(err); }
 };
 
 exports.logout = async (req, res, next) => {
   try {
-    const token = req.cookies.refreshToken;
+    const token = req.body?.refreshToken || req.cookies.refreshToken;
     if (token) await prisma.refreshToken.deleteMany({ where: { token } });
     res.clearCookie('refreshToken');
     res.json({ success: true, message: 'Logged out' });
