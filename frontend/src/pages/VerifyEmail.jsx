@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import api from '../api/api';
 
@@ -6,13 +6,32 @@ export default function VerifyEmail() {
   const navigate  = useNavigate();
   const location  = useLocation();
   const email     = location.state?.email || '';
-  const devOtp    = location.state?.otp || '';
 
-  const [otp, setOtp]         = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState('');
-  const [resending, setResending] = useState(false);
-  const [resendMsg, setResendMsg] = useState('');
+  const [shownOtp, setShownOtp]   = useState(location.state?.otp || '');
+  const [emailSent, setEmailSent] = useState(false);
+  const [otp, setOtp]             = useState('');
+  const [loading, setLoading]     = useState(false);
+  const [fetching, setFetching]   = useState(false);
+  const [error, setError]         = useState('');
+
+  // If we arrived without a code (e.g. via the login redirect), fetch one
+  // automatically so the user sees it on first load — no manual click needed.
+  useEffect(() => {
+    if (shownOtp || !email) return;
+    (async () => {
+      setFetching(true);
+      try {
+        const { data } = await api.post('/auth/resend-otp', { email });
+        if (data.otp) setShownOtp(data.otp);
+        else setEmailSent(true);
+      } catch {
+        setError('Could not generate a code. Tap "Resend code" to try again.');
+      } finally {
+        setFetching(false);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,15 +48,17 @@ export default function VerifyEmail() {
   };
 
   const handleResend = async () => {
-    setResendMsg('');
-    setResending(true);
+    setError('');
+    setLoading(false);
+    setFetching(true);
     try {
       const { data } = await api.post('/auth/resend-otp', { email });
-      setResendMsg(data.otp ? `New OTP: ${data.otp}` : 'New OTP sent to your email.');
+      if (data.otp) { setShownOtp(data.otp); setEmailSent(false); }
+      else { setEmailSent(true); setShownOtp(''); }
     } catch {
-      setResendMsg('Failed to resend. Try again.');
+      setError('Failed to resend. Try again.');
     } finally {
-      setResending(false);
+      setFetching(false);
     }
   };
 
@@ -48,24 +69,24 @@ export default function VerifyEmail() {
           <div className="text-4xl mb-3">✉️</div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Verify your email</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-            Enter the 6-digit code sent to <span className="font-medium text-gray-700 dark:text-gray-300">{email}</span>
+            {shownOtp
+              ? 'Enter the 6-digit code below to verify your account.'
+              : emailSent
+                ? <>We sent a 6-digit code to <span className="font-medium text-gray-700 dark:text-gray-300">{email}</span></>
+                : 'Generating your verification code…'}
           </p>
         </div>
 
-        {/* Dev mode: show OTP inline */}
-        {devOtp && (
-          <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg text-sm text-yellow-800 dark:text-yellow-300">
-            Dev mode — your OTP is: <span className="font-bold font-mono tracking-widest">{devOtp}</span>
+        {/* Code shown on screen (this build delivers the OTP in-app) */}
+        {shownOtp && (
+          <div className="mb-5 p-4 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-700 rounded-lg text-center">
+            <p className="text-xs uppercase tracking-wide text-indigo-500 dark:text-indigo-300 mb-1">Your verification code</p>
+            <p className="text-3xl font-bold font-mono tracking-[0.4em] text-indigo-700 dark:text-indigo-200">{shownOtp}</p>
           </div>
         )}
 
         {error && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">{error}</div>
-        )}
-        {resendMsg && (
-          <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg text-sm text-green-700 dark:text-green-300">
-            {resendMsg}
-          </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -81,9 +102,9 @@ export default function VerifyEmail() {
         </form>
 
         <div className="mt-5 flex flex-col items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-          <button onClick={handleResend} disabled={resending}
+          <button onClick={handleResend} disabled={fetching}
             className="text-indigo-600 hover:underline disabled:opacity-50">
-            {resending ? 'Sending…' : 'Resend OTP'}
+            {fetching ? 'Generating…' : 'Resend code'}
           </button>
           <Link to="/login" className="hover:underline">Back to login</Link>
         </div>

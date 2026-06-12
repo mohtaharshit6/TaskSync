@@ -27,4 +27,13 @@ const resetPasswordValidators = [
     .matches(/[0-9]/).withMessage('Password must contain a number')
 ];
 
-module.exports = { registerValidators, loginValidators, forgotPasswordValidators, resetPasswordValidators };
+const verifyEmailValidators = [
+  body('email').isEmail().normalizeEmail().withMessage('Valid email required'),
+  body('otp').trim().isLength({ min: 6, max: 6 }).isNumeric().withMessage('OTP must be a 6-digit number')
+];
+
+const resendOtpValidators = [
+  body('email').isEmail().normalizeEmail().withMessage('Valid email required')
+];
+
+module.exports = { registerValidators, loginValidators, forgotPasswordValidators, resetPasswordValidators, verifyEmailValidators, resendOtpValidators };
