@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useSocket } from '../../context/SocketContext';
 
+// Reflects the device's real network status only. A dropped Socket.io
+// connection is NOT "offline" — the socket reconnects on its own (and on
+// free hosting the server may briefly spin down), so it must not trigger
+// a scary "check your internet" banner while the network is fine.
 export default function OfflineBanner() {
   const [offline, setOffline] = useState(!navigator.onLine);
-  const { socket } = useSocket();
 
   useEffect(() => {
     const goOffline = () => setOffline(true);
@@ -15,18 +17,6 @@ export default function OfflineBanner() {
       window.removeEventListener('online',  goOnline);
     };
   }, []);
-
-  useEffect(() => {
-    if (!socket) return;
-    const onDisconnect = () => setOffline(true);
-    const onConnect    = () => setOffline(false);
-    socket.on('disconnect', onDisconnect);
-    socket.on('connect',    onConnect);
-    return () => {
-      socket.off('disconnect', onDisconnect);
-      socket.off('connect',    onConnect);
-    };
-  }, [socket]);
 
   if (!offline) return null;
 
