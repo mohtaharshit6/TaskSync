@@ -107,11 +107,11 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-3 flex items-center justify-between">
+    <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3 flex items-center justify-between">
       <Link to="/" className="text-xl font-bold text-indigo-600">TaskSync</Link>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         <Link to="/my-tasks" className="text-sm text-gray-600 dark:text-gray-300 hover:text-indigo-600 transition-colors">My Tasks</Link>
-        <span className="text-sm text-gray-600 dark:text-gray-300">{user?.name}</span>
+        <span className="hidden sm:inline text-sm text-gray-600 dark:text-gray-300 max-w-[8rem] truncate">{user?.name}</span>
 
         {/* Dark mode toggle */}
         <button onClick={() => setDark(d => !d)}
@@ -149,7 +149,7 @@ export default function Navbar() {
           </button>
 
           {showDrop && (
-            <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-50 overflow-hidden">
+            <div className="absolute right-0 top-full mt-2 w-[calc(100vw-1.5rem)] max-w-sm sm:w-80 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-50 overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-700">
                 <span className="text-sm font-semibold text-gray-900 dark:text-white">
                   {currentProjectId ? 'Project Notifications' : 'Notifications'}

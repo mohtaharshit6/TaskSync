@@ -15,7 +15,7 @@ export default function UndoToast({ message, duration = 10000, onUndo, onExpire 
   }, [duration, onExpire]);
 
   return (
-    <div className="fixed bottom-5 right-5 z-[300] w-72 bg-gray-900 text-white rounded-xl shadow-2xl overflow-hidden">
+    <div className="fixed bottom-3 left-3 right-3 sm:bottom-5 sm:right-5 sm:left-auto z-[300] w-auto sm:w-72 bg-gray-900 text-white rounded-xl shadow-2xl overflow-hidden">
       <div className="flex items-center justify-between px-4 py-3">
         <span className="text-sm">{message}</span>
         <button

@@ -64,7 +64,7 @@ export default function VerifyEmail() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-8">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-6 sm:p-8">
         <div className="text-center mb-6">
           <div className="text-4xl mb-3">✉️</div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Verify your email</h1>

@@ -154,7 +154,7 @@ export default function TaskDetail({ taskId, onClose, onDelete, onUpdate, member
         ) : (
           <>
             {/* Header */}
-            <div className="flex items-start justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-start justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
               <div className="flex-1 pr-4">
                 {editing ? (
                   <div>
@@ -244,9 +244,9 @@ export default function TaskDetail({ taskId, onClose, onDelete, onUpdate, member
             )}
 
             {/* Body */}
-            <div className="p-6 space-y-5">
+            <div className="p-4 sm:p-6 space-y-5">
               {editing ? (
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
                     <select value={form.status} onChange={set('status')}

@@ -202,8 +202,8 @@ export default function ProjectBoard() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-6 py-6">
-        <div className="flex items-center justify-between mb-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
           <div>
             <button onClick={() => navigate('/')} className="text-sm text-indigo-600 hover:underline mb-1 block">
               ← Back to projects
@@ -211,7 +211,7 @@ export default function ProjectBoard() {
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{project?.name}</h1>
             {project?.description && <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">{project.description}</p>}
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <button onClick={() => { setShowMembers(true); }}
               className="text-sm border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               Members ({members.length})
@@ -237,7 +237,7 @@ export default function ProjectBoard() {
               type="text" value={searchQuery}
               onChange={e => handleSearchChange(e.target.value)}
               placeholder="Search tasks…"
-              className="text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-36"
+              className="text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 flex-1 min-w-[8rem] sm:flex-none sm:w-36"
             />
             <select value={filterAssignee} onChange={e => setFilterAssignee(e.target.value)}
               className="text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200">

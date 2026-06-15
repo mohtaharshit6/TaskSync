@@ -40,14 +40,14 @@ export default function MyTasks() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar />
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">My Tasks</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">All tasks assigned to you across every project</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {['all', 'todo', 'in_progress', 'done'].map(s => (
               <button key={s} onClick={() => setFilter(s)}
                 className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors ${

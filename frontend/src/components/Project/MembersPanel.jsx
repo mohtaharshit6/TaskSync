@@ -108,7 +108,7 @@ export default function MembersPanel({ projectId, members, currentUserRole, curr
 
                   {/* Action buttons — only visible to owner, not on self, not on owner row */}
                   {isOwner && !isThisMe && !isThisOwner && (
-                    <div className="flex items-center gap-2 flex-shrink-0">
+                    <div className="flex items-center gap-2 flex-shrink-0 flex-wrap justify-end">
                       {m.role === 'member' ? (
                         <>
                           <button onClick={() => confirmAction('make_admin', m.userId, m.user?.name)}
