@@ -60,13 +60,17 @@ export default function TaskCard({ task, onClick, onStatusChange, columns, curre
           ))}
         </div>
         {canMove && (
-          <div className="flex gap-2 mt-2" onClick={e => e.stopPropagation()}>
-            {columns.filter(c => c.id !== task.status).map(col => (
-              <button key={col.id} onClick={() => handleMoveClick(col)}
-                className="text-xs text-gray-400 dark:text-gray-500 hover:text-indigo-600 transition-colors">
-                → {col.label}
-              </button>
-            ))}
+          <div className="mt-3 pt-2 border-t border-gray-100 dark:border-gray-600" onClick={e => e.stopPropagation()}>
+            <p className="text-[10px] font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1.5">Move to</p>
+            <div className="flex flex-wrap gap-1.5">
+              {columns.filter(c => c.id !== task.status).map(col => (
+                <button key={col.id} onClick={() => handleMoveClick(col)}
+                  title={`Move to ${col.label}`}
+                  className="inline-flex items-center gap-1 text-xs font-medium text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 px-2 py-1 rounded-md hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-gray-500 transition-colors">
+                  <span aria-hidden="true">→</span> {col.label}
+                </button>
+              ))}
+            </div>
           </div>
         )}
         <p className="text-xs text-gray-300 dark:text-gray-500 mt-2">{timeAgo(task.createdAt)}</p>

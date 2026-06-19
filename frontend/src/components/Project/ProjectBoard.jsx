@@ -366,7 +366,6 @@ export default function ProjectBoard() {
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     <option value="todo">To Do</option>
                     <option value="in_progress">In Progress</option>
-                    <option value="done">Done</option>
                   </select>
                 </div>
               </div>
