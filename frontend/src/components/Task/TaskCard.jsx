@@ -21,8 +21,16 @@ function timeAgo(dateStr) {
 export default function TaskCard({ task, onClick, onStatusChange, columns, currentUserId, currentUserRole }) {
   const [confirm, setConfirm] = useState(null);
 
-  const canMove = !task.assignedTo || task.assignedTo === currentUserId || currentUserRole === 'admin';
+  const isAdmin = currentUserRole === 'admin';
+  const canMove = !task.assignedTo || task.assignedTo === currentUserId || isAdmin;
   const isOverdue = task.dueDate && new Date(task.dueDate) < new Date() && task.status !== 'done';
+
+  // A completed task can only be reopened (moved out of Done) by an admin.
+  const moveTargets = columns.filter(c => {
+    if (c.id === task.status) return false;
+    if (task.status === 'done' && !isAdmin) return false;
+    return true;
+  });
 
   const handleMoveClick = (col) => setConfirm({ colId: col.id, colLabel: col.label });
 
@@ -59,11 +67,11 @@ export default function TaskCard({ task, onClick, onStatusChange, columns, curre
             </span>
           ))}
         </div>
-        {canMove && (
+        {canMove && moveTargets.length > 0 && (
           <div className="mt-3 pt-2 border-t border-gray-100 dark:border-gray-600" onClick={e => e.stopPropagation()}>
             <p className="text-[10px] font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1.5">Move to</p>
             <div className="flex flex-wrap gap-1.5">
-              {columns.filter(c => c.id !== task.status).map(col => (
+              {moveTargets.map(col => (
                 <button key={col.id} onClick={() => handleMoveClick(col)}
                   title={`Move to ${col.label}`}
                   className="inline-flex items-center gap-1 text-xs font-medium text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 px-2 py-1 rounded-md hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-gray-500 transition-colors">

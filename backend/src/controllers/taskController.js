@@ -130,6 +130,11 @@ exports.updateTask = async (req, res, next) => {
       }
     }
 
+    // Reopening a completed task (Done → To Do / In Progress) is admin-only
+    if (status !== undefined && oldTask.status === 'done' && status !== 'done' && !isAdmin) {
+      return res.status(403).json({ success: false, message: 'Only a project admin can move a completed task back' });
+    }
+
     const updated = await prisma.task.update({
       where: { id: req.params.id },
       data: {
