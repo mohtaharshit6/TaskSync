@@ -1,5 +1,7 @@
 # TaskSync
 
+**🔗 Live Demo: [task-sync-nu.vercel.app](https://task-sync-nu.vercel.app/)**
+
 A full-stack, real-time **collaborative task management** application — think a lightweight Trello with live updates, team chat, and role-based access control.
 
 Teams create projects, invite members with a code, and manage work on a Kanban board (To Do / In Progress / Done) where changes appear **instantly for everyone** via WebSockets. Tasks support priorities, due dates, assignees, labels, subtask checklists, comments with @mentions, and a full activity log.
